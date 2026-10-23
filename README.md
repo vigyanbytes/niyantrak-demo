@@ -23,7 +23,7 @@ This repository holds only what is needed to build and run that demo. It has no 
 | Nothing stored | Submitted text lives in memory for the length of one request. No database, no files: the container runs with a read-only root filesystem. |
 | Nothing logged | Request logs contain method, path without the query string, status and duration. Never the body, the query string, the client address, the user agent or cookies. |
 | Rate limited | 30 scans a minute per client (burst 10), 600 a minute in total; 64 KB per request, 20 000 characters per text. Clients are tracked by a salted hash in memory only. |
-| No real data | Every name, machine, path and address in the sample data is made up. |
+| No real data | Every name, machine, path and address in the sample data is made up. The real panel's live screens (which show the running machine's hostname and addresses) are never served: Overview and Fleet come from the sample bundle baked into the page at build time, and the server exposes no node, peer or network API. `scripts/smoke.sh` fails if a public response contains a real fleet hostname, the origin address, or a private/tailnet address. |
 | Headers | Content-Security-Policy (`default-src 'none'`, scripts only from this page by hash and the pinned ECharts on jsDelivr, `frame-ancestors 'none'`), X-Frame-Options DENY, nosniff, no-referrer, Permissions-Policy, COOP/CORP, HSTS. API responses are `Cache-Control: no-store`. |
 | Pinned build | Base image by digest, the free edition by commit (`v0.1.0` = `48f8727`), build-only packages by version. Runs as an unprivileged user (uid 10001). |
 

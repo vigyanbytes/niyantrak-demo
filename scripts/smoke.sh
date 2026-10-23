@@ -37,6 +37,26 @@ for hname in content-security-policy x-frame-options x-content-type-options refe
 done
 grep -qi "^content-security-policy:.*frame-ancestors 'none'" <<<"$hdr" && ok "CSP frame-ancestors 'none'" || bad "CSP frame-ancestors"
 
+# no real host data: the public responses must not name the server, the fleet, or any private/tailnet/origin address.
+# The embedded proof summary (window.NIYANTRAK_PROOF) is excluded from the IP check only: its test names carry RFC
+# example addresses (10.1.2.3, 172.16.0.5, 100.64.0.7, fd00::5) as fixtures. FORBIDDEN adds names (regex, |-joined).
+leak="$( { c "$BASE/"; echo; c "$BASE/healthz"; echo; c "$BASE/robots.txt"; echo;
+          c -X POST -H 'Content-Type: application/json' --data '{"text":"hello"}' "$BASE/api/scan"; } \
+  | FORBIDDEN="${FORBIDDEN:-}" python3 -c '
+import os, re, sys
+s = sys.stdin.read()
+names = r"vigyan-(?:hostinger|desktop|ai-pc|laptop)|hostinger|\bsrv\d{3,}\b|[\w-]+\.[\w-]+\.ts\.net|\b200\.234\.35\.155\b|/home/manish|manishknema"
+if os.environ.get("FORBIDDEN"):
+    names += "|" + os.environ["FORBIDDEN"]
+hits = re.findall(names, s, re.I)
+body = re.sub(r"window\.NIYANTRAK_PROOF = .*?;\n", "", s, flags=re.S)
+ips = r"\b(?:10\.\d+|172\.(?:1[6-9]|2\d|3[01])|192\.168|100\.(?:6[4-9]|[7-9]\d|1[01]\d|12[0-7]))\.\d+\.\d+\b|\bf[cd][0-9a-f]{2}:[0-9a-f:]+"
+hits += re.findall(ips, body, re.I)
+print(" ".join(sorted(set(hits))))
+')"
+[ -z "$leak" ] && ok "no real hostnames, origin, private or tailnet addresses in public responses" \
+  || bad "public responses leak: $leak"
+
 # try it
 AADHAAR='2345 6789 0124'
 body="{\"text\":\"Hi, my Aadhaar is $AADHAAR, PAN ABCPE1234F, mail ramesh@example.com, card 4111 1111 1111 1111\"}"
