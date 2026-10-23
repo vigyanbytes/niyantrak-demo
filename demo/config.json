@@ -1,0 +1,40 @@
+{
+  "$comment": "Demo-mode settings for demo/server.py. No secrets belong here; the demo needs none.",
+  "read_only": true,
+  "port": 8080,
+  "max_body_bytes": 65536,
+  "max_text_chars": 20000,
+  "request_timeout_seconds": 10,
+  "rate_limit": {
+    "scan_per_client_per_minute": 30,
+    "scan_burst_per_client": 10,
+    "scan_global_per_minute": 600,
+    "max_tracked_clients": 20000
+  },
+  "logging": {
+    "requests": true,
+    "fields": ["method", "path_without_query", "status", "duration_ms"],
+    "never_logged": ["request body", "submitted text", "query string", "client IP", "user agent", "cookies"]
+  },
+  "headers": {
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "Strict-Transport-Security": "max-age=31536000"
+  },
+  "csp": {
+    "default-src": ["'none'"],
+    "script-src": ["'self'", "https://cdn.jsdelivr.net", "@inline-script-hashes"],
+    "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    "font-src": ["https://fonts.gstatic.com"],
+    "img-src": ["'self'", "data:"],
+    "connect-src": ["'self'"],
+    "base-uri": ["'none'"],
+    "form-action": ["'none'"],
+    "frame-ancestors": ["'none'"],
+    "object-src": ["'none'"]
+  }
+}
