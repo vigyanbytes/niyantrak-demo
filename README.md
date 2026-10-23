@@ -62,6 +62,15 @@ Deployed with Coolify from this repository (Dockerfile build, port 8080) on a VP
 application; it shares nothing with other sites on that host. Cloudflare does not cache HTML or `/api/*` for this
 hostname; the page is `no-cache` and the API `no-store` at the origin either way.
 
+First-time setup (needs a write-capable Coolify token and a Cloudflare DNS token; both scripts are report-only
+without `--apply` and touch only the demo's own app and record):
+
+```bash
+COOLIFY_BASE_URL=http://localhost:8000 COOLIFY_TOKEN=... deploy/coolify-create.sh --apply
+CLOUDFLARE_API_TOKEN=... deploy/cloudflare-demo-dns.sh --apply
+scripts/smoke.sh https://demo.vigyanbytes.com
+```
+
 ## License
 
 Apache-2.0. Niyantrak itself is Apache-2.0 too, © VigyanBytes Solutions Private Limited.
