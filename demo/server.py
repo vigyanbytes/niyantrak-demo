@@ -2,9 +2,10 @@
 
     python3 demo/server.py [--site site] [--config demo/config.json] [--port 8080]
 
-Serves the demo page built by demo/seed.py (fictional sample team) and one live endpoint:
+Serves the demo pages built by demo/seed.py and one live endpoint:
 
-    GET  /             the panel in demo mode (sample data, labelled "Sample data")
+    GET  /             the panel in demo mode (fictional sample team, labelled "Sample data")
+    GET  /build-record the same panel on our own real, sanitised build record (labelled "Real build record")
     GET  /healthz      {"ok": true, ...}
     POST /api/scan     {"text": "..."} -> {"masked": "...", "counts": {...}} using Niyantrak's real recognizers.
                        The text is held in memory for the length of the request only: never stored, never logged.
@@ -91,9 +92,11 @@ def build_csp(cfg, html):
     return "; ".join(parts)
 
 
-def make_handler(cfg, page, limiter):
-    csp = build_csp(cfg["csp"], page.decode())
-    common = dict(cfg["headers"], **{"Content-Security-Policy": csp})
+def make_handler(cfg, pages, limiter):
+    """pages: {path: html bytes}. Each page gets its own CSP (its own inline-script hashes)."""
+    served = {path: (body, dict(cfg["headers"], **{"Content-Security-Policy": build_csp(cfg["csp"], body.decode())}))
+              for path, body in pages.items()}
+    common = dict(cfg["headers"], **{"Content-Security-Policy": build_csp(cfg["csp"], "")})
     health = json.dumps({"ok": True, "mode": "read-only demo", "niyantrak": NIYANTRAK_VERSION}).encode()
     max_body, max_text, log_requests = cfg["max_body_bytes"], cfg["max_text_chars"], cfg["logging"]["requests"]
 
@@ -116,9 +119,9 @@ def make_handler(cfg, page, limiter):
             self._t0 = time.monotonic()
             return super().parse_request()
 
-        def _send(self, code, body, ctype="application/json; charset=utf-8", cache="no-store", extra=None):
+        def _send(self, code, body, ctype="application/json; charset=utf-8", cache="no-store", extra=None, hdrs=None):
             self.send_response(code)
-            for k, v in common.items():
+            for k, v in (hdrs or common).items():
                 self.send_header(k, v)
             self.send_header("Content-Type", ctype)
             self.send_header("Cache-Control", cache)
@@ -139,8 +142,10 @@ def make_handler(cfg, page, limiter):
 
         def do_GET(self):
             path = self.path.split("?", 1)[0]
-            if path in ("/", "/index.html"):
-                return self._send(200, page, "text/html; charset=utf-8", cache="no-cache")
+            path = "/" if path == "/index.html" else path.rstrip("/") or "/"
+            if path in served:
+                body, hdrs = served[path]
+                return self._send(200, body, "text/html; charset=utf-8", cache="no-cache", hdrs=hdrs)
             if path == "/healthz":
                 return self._send(200, health)
             if path == "/favicon.ico":
@@ -202,12 +207,16 @@ def main(argv=None):
         cfg = json.load(f)
     if not cfg.get("read_only"):
         sys.exit("config: read_only must be true for the public demo")
-    with open(os.path.join(a.site, "index.html"), "rb") as f:
-        page = f.read()
+    pages = {}
+    for path, rel in (("/", "index.html"), ("/build-record", os.path.join("build-record", "index.html"))):
+        if path == "/" or os.path.exists(os.path.join(a.site, rel)):
+            with open(os.path.join(a.site, rel), "rb") as f:
+                pages[path] = f.read()
     port = a.port or cfg["port"]
     httpd = Server((os.environ.get("BIND", "0.0.0.0"), port),
-                   make_handler(cfg, page, Limiter(cfg["rate_limit"])))
-    sys.stderr.write("niyantrak-demo %s listening on :%d (read-only)\n" % (NIYANTRAK_VERSION, port))
+                   make_handler(cfg, pages, Limiter(cfg["rate_limit"])))
+    sys.stderr.write("niyantrak-demo %s listening on :%d (read-only; pages %s)\n"
+                     % (NIYANTRAK_VERSION, port, " ".join(sorted(pages))))
     httpd.serve_forever()
 
 

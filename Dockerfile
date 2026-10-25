@@ -1,4 +1,4 @@
-# Niyantrak public demo — read-only, fictional sample data, no secrets.
+# Niyantrak public demo — read-only, fictional sample data + our sanitised build record, no secrets.
 # Pinned: base image by digest, the free edition by commit (tag v0.1.1), build-only packages by version.
 ARG PYTHON_IMAGE=python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
 
@@ -13,13 +13,14 @@ RUN git init -q /src && cd /src \
  && test "$(git rev-parse HEAD)" = "$NIYANTRAK_COMMIT"
 COPY requirements-build.txt /tmp/
 RUN pip install --no-cache-dir --disable-pip-version-check --timeout 120 --retries 5 -r /tmp/requirements-build.txt
-COPY demo/seed.py /demo/seed.py
-RUN python /demo/seed.py --src /src --out /site ${DEMO_END:+--end "$DEMO_END"}
+COPY demo/seed.py demo/record_bundle.py /demo/
+COPY demo/build-record /demo/build-record
+RUN python /demo/seed.py --src /src --out /site --record /demo/build-record ${DEMO_END:+--end "$DEMO_END"}
 
 FROM ${PYTHON_IMAGE}
 LABEL org.opencontainers.image.source="https://github.com/vigyanbytes/niyantrak-demo" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.description="Niyantrak read-only public demo (fictional sample data)"
+      org.opencontainers.image.description="Niyantrak read-only public demo (fictional sample team and our sanitised build record)"
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8080
 RUN useradd --system --uid 10001 --user-group --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin demo
 WORKDIR /app
