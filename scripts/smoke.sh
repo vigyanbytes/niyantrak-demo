@@ -39,13 +39,13 @@ grep -qi "^content-security-policy:.*frame-ancestors 'none'" <<<"$hdr" && ok "CS
 
 # no real host data: the public responses must not name the server, the fleet, or any private/tailnet/origin address.
 # The embedded proof summary (window.NIYANTRAK_PROOF) is excluded from the IP check only: its test names carry RFC
-# example addresses (10.1.2.3, 172.16.0.5, 100.64.0.7, fd00::5) as fixtures. FORBIDDEN adds names (regex, |-joined).
+# example addresses (10.1.2.3, 172.16.0.5, 100.64.0.7, fd00::5) as fixtures. FORBIDDEN adds your own server names and addresses (regex, |-joined); keep them out of the repo, e.g. FORBIDDEN="$(cat ~/.config/niyantrak-demo/forbidden)".
 leak="$( { c "$BASE/"; echo; c "$BASE/healthz"; echo; c "$BASE/robots.txt"; echo;
           c -X POST -H 'Content-Type: application/json' --data '{"text":"hello"}' "$BASE/api/scan"; } \
   | FORBIDDEN="${FORBIDDEN:-}" python3 -c '
 import os, re, sys
 s = sys.stdin.read()
-names = r"vigyan-(?:hostinger|desktop|ai-pc|laptop)|hostinger|\bsrv\d{3,}\b|[\w-]+\.[\w-]+\.ts\.net|\b200\.234\.35\.155\b|/home/manish|manishknema"
+names = r"\bsrv\d{3,}\b|[\w-]+\.[\w-]+\.ts\.net|/home/\w+"
 if os.environ.get("FORBIDDEN"):
     names += "|" + os.environ["FORBIDDEN"]
 hits = re.findall(names, s, re.I)

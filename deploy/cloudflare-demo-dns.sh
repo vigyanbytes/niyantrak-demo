@@ -10,8 +10,8 @@
 set -euo pipefail
 MODE=report; [ "${1:-}" = "--apply" ] && MODE=apply
 : "${CLOUDFLARE_API_TOKEN:?set CLOUDFLARE_API_TOKEN (Zone:DNS:Edit for vigyanbytes.com)}"
-ZONE_ID="${CF_ZONE_ID:-e9ae2657ee4cf54b175d0bae13d1e280}"   # vigyanbytes.com (scripts/infra/vigyanbytes.conf)
-ORIGIN_IP="${ORIGIN_IP:-200.234.35.155}"                    # vigyan-hostinger (same file)
+ZONE_ID="${CF_ZONE_ID:?set CF_ZONE_ID (the vigyanbytes.com zone id, from the private infra config)}"
+ORIGIN_IP="${ORIGIN_IP:?set ORIGIN_IP (the origin server address, from the private infra config)}"
 NAME=demo.vigyanbytes.com
 API=https://api.cloudflare.com/client/v4
 H=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json")

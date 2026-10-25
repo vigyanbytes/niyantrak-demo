@@ -11,14 +11,14 @@
 set -euo pipefail
 
 MODE=report; [ "${1:-}" = "--apply" ] && MODE=apply
-: "${COOLIFY_BASE_URL:?set COOLIFY_BASE_URL (e.g. http://localhost:8000 through vigyanbytes-web/scripts/coolify-tunnel.sh)}"
+: "${COOLIFY_BASE_URL:?set COOLIFY_BASE_URL (e.g. http://localhost:8000 through your Coolify tunnel)}"
 : "${COOLIFY_TOKEN:?set COOLIFY_TOKEN (a write-capable Coolify API token; the MCP token is read-only)}"
 API="${COOLIFY_BASE_URL%/}/api/v1"
 NAME=niyantrak-demo
 DOMAIN=demo.vigyanbytes.com
 REPO=https://github.com/vigyanbytes/niyantrak-demo
-SERVER_UUID="${SERVER_UUID:-tdy7h3lhdmar60momx2gdicd}"          # "localhost" = vigyan-hostinger (read 2026-10-23)
-DESTINATION_UUID="${DESTINATION_UUID:-wetxqmxmfvaa8nnhkzv86acc}" # network "coolify", same as vigyanbytes-web
+SERVER_UUID="${SERVER_UUID:?set SERVER_UUID (the Coolify server id, from the Coolify UI/API)}"
+DESTINATION_UUID="${DESTINATION_UUID:?set DESTINATION_UUID (the Coolify destination/network id)}"
 RUN_OPTS="--read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --cap-drop ALL --security-opt no-new-privileges --pids-limit 128"
 
 log() { echo "[coolify-create:$MODE] $*"; }
