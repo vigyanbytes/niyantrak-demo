@@ -148,8 +148,8 @@ DECISIONS = [   # (id, day, who, title, text, about)
     ("BR-DEC-03", "2026-10-23", "founder", "After a gate block the agent stops: no other tool, no rewording",
      "Set mid-launch, after two agents had continued past a block (see the disclosed slips).", "agent-gate"),
     ("BR-DEC-04", "2026-10-23", "founder", "Public history starts fresh at v0.1.0",
-     "A history scan found a personal email on nine early commits, so the public repository was exported fresh "
-     "under the company identity. The leak scan runs on the tree and the history before every push.", "niyantrak"),
+     "The public repository was exported fresh under the company identity. The leak scan runs on the tree and the "
+     "history before every push.", "niyantrak"),
     ("BR-DEC-05", "2026-10-23", "founder", "Free edition under Apache-2.0; Pro, Enterprise and Government are commercial",
      None, "niyantrak"),
     ("BR-DEC-06", "2026-10-23", "founder", "Contributions under the DCO, no CLA", None, "niyantrak"),
@@ -264,7 +264,7 @@ def from_store(st, cfg):
     out = []
     for ts, what, where, why, outcome in rows:
         d = ts.replace(tzinfo=timezone.utc)
-        if in_window(d, cfg) and outcome in ("needs_approval", "approved", "rejected"):
+        if in_window(d, cfg) and outcome in ("needs_approval", "approved", "rejected") and (what, why) in FOUNDER_DECISIONS:
             out.append(event(iso(d), "founder", what, where, why, outcome, which=st["which"], rule_ids=[st["rule"]]))
     return out
 
@@ -362,6 +362,14 @@ def forbidden_terms(files):
     return terms
 
 
+# The founder's launch decisions that may be published, as (what, why) read from the store. Anything else from the
+# store is left out: decisions that name dates or personal details stay private.
+FOUNDER_DECISIONS = {
+    ("decide: GitHub organisation", "where the public repo lives"),
+    ("decide: security contact email", "needed for SECURITY.md"),
+    ("decide: DCO or CLA", "contributor terms before public launch"),
+    ("approve WhatsApp alert template", "launch alerts to founder"),
+}
 # Private terms files that must all be present: servers and addresses, people, and topics that must never be
 # published. Their contents are never committed and never printed.
 REQUIRED_TERMS = ("forbidden", "forbidden-people", "forbidden-topics")

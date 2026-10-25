@@ -51,8 +51,14 @@ class CommittedData(unittest.TestCase):
             self.assertIn(e["agent"], ("Claude Code", "not recorded", None))
             self.assertIsNone(e["whom"])
             self.assertEqual(e["entity_counts"], {})
-            if e["what"] not in whats:        # only the founder's launch decisions pass through from the store
+            if e["what"] not in whats:        # only allow-listed founder launch decisions pass through from the store
                 self.assertEqual((e["who"], e["rule_ids"]), ("founder", ["niyantrak-launch"]), e["what"])
+                self.assertIn((e["what"], e["why"]), br.FOUNDER_DECISIONS)
+
+    def test_no_dates_or_personal_details_from_the_founder(self):
+        for name, text in FILES.items():
+            self.assertNotRegex(text.lower(), r"personal email|\b\d{1,2} (?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b"
+                                              r"|release date|trademark", name)
 
     def test_no_paths_addresses_or_emails(self):
         for name, text in FILES.items():

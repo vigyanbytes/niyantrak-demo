@@ -1,7 +1,7 @@
 {
  "labels": {
   "agent": {
-   "(not recorded)": 7,
+   "(not recorded)": 4,
    "Claude Code": 165,
    "not recorded": 30
   },
@@ -45,7 +45,7 @@
    "reviewer agent"
   ],
   "machine": {
-   "(not recorded)": 166,
+   "(not recorded)": 163,
    "Windows test laptop": 1,
    "build machine A": 35
   },
@@ -54,13 +54,13 @@
    "approved": 2,
    "blocked": 10,
    "error": 1,
-   "needs_approval": 9
+   "needs_approval": 6
   },
   "rule_ids": {
    "destructive_command": 4,
    "destructive_git": 4,
    "disclosed-slip": 3,
-   "niyantrak-launch": 7,
+   "niyantrak-launch": 4,
    "permission-prompt": 2,
    "production_deploy": 4,
    "proof": 19,
@@ -87,16 +87,11 @@
    "approve WhatsApp alert template": 1,
    "decide: DCO or CLA": 1,
    "decide: GitHub organisation": 1,
-   "decide: fresh public history at v0.1.0": 1,
-   "decide: name and trademark check": 1,
-   "decide: release date": 1,
    "decide: security contact email": 1
   },
   "where": {
    "git": 161,
-   "github": 5,
-   "launch": 1,
-   "legal": 1,
+   "github": 4,
    "shell": 5,
    "test suite": 19,
    "whatsapp": 1,
@@ -104,17 +99,17 @@
   },
   "which": {
    "private repo": 151,
-   "vigyanbytes/niyantrak": 38,
+   "vigyanbytes/niyantrak": 35,
    "vigyanbytes/niyantrak-demo": 9,
    "vigyanbytes/niyantrak-keys": 4
   },
   "who": {
    "coding agent": 163,
-   "founder": 38,
+   "founder": 35,
    "reviewer agent": 1
   },
   "whom": {
-   "(not recorded)": 202
+   "(not recorded)": 199
   },
   "why": {
    "121 passed 0 failed 1 skipped, leak scan clean": 1,
@@ -143,15 +138,12 @@
    "disclosed: wording kept the deploy matcher from firing": 1,
    "every gap closed and retested": 1,
    "gaps before going public: body cap, rate limit, HSTS": 1,
-   "launch 10 Nov, BTS 17 Nov": 1,
    "launch alerts to founder": 1,
    "needed for SECURITY.md": 1,
    "no agent trailer on commit": 30,
    "permission prompt: recursive delete in one command": 1,
-   "personal email on 9 early commits": 1,
    "production_deploy hard stop": 2,
    "production_deploy hard stop (false positive)": 1,
-   "public repo before BTS": 1,
    "where the public repo lives": 1,
    "worktree isolation: refused by the harness": 1
   }
@@ -159,7 +151,7 @@
  "meta": {
   "cutoff": "2026-10-25T11:30:00Z",
   "decision_rows": 73,
-  "events": 202,
+  "events": 199,
   "label": "Real build record — sanitised: role labels, generic machines, counts only",
   "window": [
    "2026-10-21",

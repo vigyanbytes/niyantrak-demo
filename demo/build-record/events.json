@@ -1211,57 +1211,6 @@
  {
   "agent": null,
   "entity_counts": {},
-  "event_id": "68454fc018b31208339ca29cd8471fd6",
-  "machine": null,
-  "outcome": "needs_approval",
-  "rule_ids": [
-   "niyantrak-launch"
-  ],
-  "ts": "2026-10-23T07:25:00Z",
-  "what": "decide: fresh public history at v0.1.0",
-  "where": "github",
-  "which": "vigyanbytes/niyantrak",
-  "who": "founder",
-  "whom": null,
-  "why": "personal email on 9 early commits"
- },
- {
-  "agent": null,
-  "entity_counts": {},
-  "event_id": "048444d20ef8202583a1e9f25ca139d0",
-  "machine": null,
-  "outcome": "needs_approval",
-  "rule_ids": [
-   "niyantrak-launch"
-  ],
-  "ts": "2026-10-23T07:25:00Z",
-  "what": "decide: name and trademark check",
-  "where": "legal",
-  "which": "vigyanbytes/niyantrak",
-  "who": "founder",
-  "whom": null,
-  "why": "launch 10 Nov, BTS 17 Nov"
- },
- {
-  "agent": null,
-  "entity_counts": {},
-  "event_id": "20e6b74520cf81413b5a9418f783bded",
-  "machine": null,
-  "outcome": "needs_approval",
-  "rule_ids": [
-   "niyantrak-launch"
-  ],
-  "ts": "2026-10-23T07:25:00Z",
-  "what": "decide: release date",
-  "where": "launch",
-  "which": "vigyanbytes/niyantrak",
-  "who": "founder",
-  "whom": null,
-  "why": "public repo before BTS"
- },
- {
-  "agent": null,
-  "entity_counts": {},
   "event_id": "1e3df6c1bb8f515d940601d12469300b",
   "machine": null,
   "outcome": "needs_approval",
