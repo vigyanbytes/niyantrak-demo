@@ -59,6 +59,30 @@ class CommittedData(unittest.TestCase):
             self.assertIsNone(br.STRICT.search(text), name)
 
     @unittest.skipUnless(PRIVATE, "private forbidden-terms files not present")
+    def test_page_text_has_no_private_terms(self):
+        for path in PRIVATE:
+            rx = re.compile(open(path, encoding="utf-8").read().strip(), re.I)
+            for active in ("sample", "build-record"):
+                self.assertIsNone(rx.search(seed.switch_bar(active)), f"{active}: {os.path.basename(path)}")
+
+    def test_all_private_terms_files_are_required(self):
+        with tempfile.TemporaryDirectory() as d:
+            only = os.path.join(d, "forbidden")
+            with open(only, "w") as f:
+                f.write("zed")
+            with self.assertRaises(SystemExit) as cm:
+                br.main(["--src", ".", "--sources", os.path.join(d, "none.json"), "--forbidden", only])
+        self.assertIn("forbidden-people", str(cm.exception))
+        self.assertIn("forbidden-topics", str(cm.exception))
+
+    def test_no_machine_wide_gate_log(self):
+        # the gate log cannot tell projects apart, so the record's gate blocks come only from the agents' reports
+        self.assertFalse([e for e in EVENTS if e["which"] is None and e["who"] != "founder"])
+        blocked = [e for e in EVENTS if e["outcome"] == "blocked"]
+        self.assertTrue(blocked)
+        self.assertTrue(all(e["ts"][11:13] == "09" for e in blocked))
+
+    @unittest.skipUnless(PRIVATE, "private forbidden-terms files not present")
     def test_no_private_terms(self):
         for path in PRIVATE:
             rx = re.compile(open(path, encoding="utf-8").read().strip(), re.I)
@@ -81,7 +105,7 @@ class CommittedData(unittest.TestCase):
         out = {}
         for e in EVENTS:
             out[e["outcome"]] = out.get(e["outcome"], 0) + 1
-        self.assertGreater(out.get("blocked", 0), 0)
+        self.assertEqual(out.get("blocked"), 10)
         self.assertEqual(sum("disclosed-slip" in e["rule_ids"] for e in EVENTS), 3)
         titles = {d["title"] for d in DECISIONS}
         self.assertEqual(sum(t.startswith("Disclosed slip:") for t in titles), 3)

@@ -9,8 +9,9 @@ events (niyantrak.6w/1) and decision-log items that the public demo shows next t
 
 Inputs are private and never committed; their locations come from --sources (default
 ~/.config/niyantrak-demo/build-record-sources.json):
-    gate_logs   the autonomy gate's log: one line per tool call with the gate, the tool name, the decision and a hash
-                of the input (never the input itself)
+    gate_logs   optional, and not used for the published record: the autonomy gate's machine-wide log (tool name,
+                gate, decision, input hash). It cannot tell which project a call belonged to, so the record takes its
+                gate blocks from the Niyantrak agents' own reports instead (REPORTED below)
     store       a Niyantrak 6W store; only events tagged with the launch rule are used (the founder's decisions)
     repos       git checkouts; per commit only the author date and whether it carries an agent co-author trailer
                 (no message, no author, no file); a proof history (date + test counts) where named
@@ -23,7 +24,7 @@ store that passes the 6W validator and the forbidden-terms check:
     which    the public repository name for public repos, "private repo" otherwise, null when not recorded
     what     a tool category (Run shell command, Edit file, ...), never a command, path, message or file content
 Everything is validated with Niyantrak's own validator (it rejects identifiers) and every output file is checked
-against the private forbidden-terms files (regex, |-joined; default ~/.config/niyantrak-demo/forbidden*).
+against a built-in strict list and the private terms files (servers, people and excluded topics) (regex, |-joined; default ~/.config/niyantrak-demo/forbidden*).
 
 Writes, under --out: events.json, decisions.jsonl, labels.json (every distinct published label value, for review).
 --check regenerates in memory and fails if the committed files differ.
@@ -44,7 +45,7 @@ LABEL = "Real build record — sanitised: role labels, generic machines, counts 
 
 WHO = ("founder", "coding agent", "reviewer agent")
 MACHINES = ("build machine A", "Windows test laptop")
-PUBLIC_REPOS = ("vigyanbytes/niyantrak", "vigyanbytes/niyantrak-demo")
+PUBLIC_REPOS = ("vigyanbytes/niyantrak", "vigyanbytes/niyantrak-demo", "vigyanbytes/niyantrak-keys")
 PRIVATE = "private repo"
 GATES = ("destructive_git", "destructive_command", "production_deploy", "secret_access")
 TOOLS = {   # tool name -> (what, where)
@@ -70,9 +71,39 @@ MCP = (   # tool-name prefix -> (what, where)
     ("mcp__", ("Connector call", "connector")),
 )
 
-# Governance moments that are not in a machine log: written from the agents' own reports (day only, so they are
-# shown at 12:00 UTC). Each is a real event; the wording is ours and carries no names, hosts or paths.
+# Governance moments taken from the reports of the agents that built Niyantrak (its client, dashboard, demo, keys
+# CLI, installer and social tooling): every gate block and permission prompt they disclosed, the founder's approval,
+# the review and the slips. Day only, so they are shown from 09:00 UTC. Each is a real event; the wording is ours and
+# carries no names, hosts or paths. The machine-wide gate log is deliberately not used: it cannot tell which project
+# a tool call belonged to.
 REPORTED = [
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A", what="Edit docs",
+         where="workspace files", which="vigyanbytes/niyantrak", why="destructive_git hard stop (false positive)",
+         outcome="blocked", rule_ids=["destructive_git"], minute=1),
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A",
+         what="Create GitHub release", where="github", which="vigyanbytes/niyantrak", why="production_deploy hard stop",
+         outcome="blocked", rule_ids=["production_deploy"], minute=2),
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A", what="Write Dockerfile",
+         where="workspace files", which="vigyanbytes/niyantrak-demo", why="destructive_command hard stop",
+         outcome="blocked", rule_ids=["destructive_command"], minute=3),
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A",
+         what="Test deploy script on a mock", where="shell", which="vigyanbytes/niyantrak-demo",
+         why="production_deploy hard stop", outcome="blocked", rule_ids=["production_deploy"], minute=4),
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A",
+         what="Force-push to fix commit author", where="git", which=PRIVATE, why="destructive_git hard stop",
+         outcome="blocked", rule_ids=["destructive_git"], minute=6),
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A", what="Write Dockerfile",
+         where="workspace files", which=PRIVATE, why="destructive_command hard stop", outcome="blocked",
+         rule_ids=["destructive_command"], minute=7),
+    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A",
+         what="Write outside its worktree", where="workspace files", which=PRIVATE,
+         why="worktree isolation: refused by the harness", outcome="blocked", rule_ids=["worktree-isolation"], minute=8),
+    dict(day="2026-10-25", who="coding agent", agent="Claude Code", machine="build machine A", what="Write docs file",
+         where="workspace files", which="vigyanbytes/niyantrak-keys", why="destructive_git hard stop (false positive)",
+         outcome="blocked", rule_ids=["destructive_git"], minute=1),
+    dict(day="2026-10-25", who="coding agent", agent="Claude Code", machine="build machine A", what="Write CI workflow",
+         where="workspace files", which="vigyanbytes/niyantrak-keys", why="production_deploy hard stop (false positive)",
+         outcome="blocked", rule_ids=["production_deploy"], minute=2),
     dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A", what="Export public tree",
          where="shell", which="vigyanbytes/niyantrak", why="permission prompt: recursive delete in one command",
          outcome="needs_approval", rule_ids=["permission-prompt"]),
@@ -101,9 +132,6 @@ REPORTED = [
     dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A",
          what="Fix review findings", where="workspace files", which=PRIVATE, why="every gap closed and retested",
          outcome="approved", rule_ids=["review"], minute=50),
-    dict(day="2026-10-23", who="coding agent", agent="Claude Code", machine="build machine A",
-         what="Change own gate", where="Claude Code", which=None, why="refused: agents do not modify their own gate",
-         outcome="blocked", rule_ids=["self-modification"]),
 ]
 
 D = lambda day, h=12: f"{day}T{h:02d}:00:00.000000000"
@@ -115,8 +143,8 @@ DECISIONS = [   # (id, day, who, title, text, about)
      "The login record and the system's user directory give the name; a stable directory id survives renames. "
      "Agents are recorded as acting for that person.", "niyantrak"),
     ("BR-DEC-02", "2026-10-23", "founder", "Agents never change their own gate",
-     "An agent tried to switch the gate from block to ask. The change was refused as self-modification. Restarts, "
-     "staging and gate changes stay with the founder.", "agent-gate"),
+     "Changing the gate is self-modification and is refused. Restarts, staging and gate changes stay with the "
+     "founder.", "agent-gate"),
     ("BR-DEC-03", "2026-10-23", "founder", "After a gate block the agent stops: no other tool, no rewording",
      "Set mid-launch, after two agents had continued past a block (see the disclosed slips).", "agent-gate"),
     ("BR-DEC-04", "2026-10-23", "founder", "Public history starts fresh at v0.1.0",
@@ -280,7 +308,7 @@ def from_repo(repo, cfg):
 def reported():
     out = []
     for r in REPORTED:
-        ts = f"{r['day']}T{r.get('hour', 12):02d}:{r.get('minute', 0):02d}:00Z"
+        ts = f"{r['day']}T09:{r.get('minute', 0):02d}:00Z"
         out.append(event(ts, r["who"], r["what"], r["where"], r["why"], r["outcome"], agent=r["agent"],
                          machine=r["machine"], which=r["which"], rule_ids=r["rule_ids"]))
     return out
@@ -334,6 +362,9 @@ def forbidden_terms(files):
     return terms
 
 
+# Private terms files that must all be present: servers and addresses, people, and topics that must never be
+# published. Their contents are never committed and never printed.
+REQUIRED_TERMS = ("forbidden", "forbidden-people", "forbidden-topics")
 # Never in the published record, whatever the private files say: home folders, addresses, emails, tailnet names.
 STRICT = re.compile(r"/home/|/Users/|[A-Za-z]:[\\/]Users|\b\d{1,3}(?:\.\d{1,3}){3}\b|[\w.+-]+@[\w-]+\.\w+|\.ts\.net\b"
                     r"|\bsrv\d{3,}\b", re.I)
@@ -366,7 +397,7 @@ def generate(src, cfg):
     from niyantrak.decisions import schema as dschema
     from niyantrak.telemetry.schema import validate
     ev = []
-    for g in cfg["gate_logs"]:
+    for g in cfg.get("gate_logs", []):
         ev += from_gate_log(g, cfg)
     if cfg.get("store"):
         ev += from_store(cfg["store"], cfg)
@@ -400,11 +431,12 @@ def main(argv=None):
     ap.add_argument("--forbidden", nargs="*", default=sorted(glob.glob(os.path.join(CONFIG, "forbidden*"))))
     ap.add_argument("--check", action="store_true", help="fail if the committed files differ from a fresh run")
     a = ap.parse_args(argv)
+    terms = forbidden_terms(a.forbidden)
+    missing = sorted(set(REQUIRED_TERMS) - {name for name, _ in terms})
+    if missing:
+        sys.exit(f"build-record: private terms file(s) missing: {', '.join(missing)}; refusing to write real data")
     with open(os.path.expanduser(a.sources), encoding="utf-8") as f:
         cfg = json.load(f)
-    terms = forbidden_terms(a.forbidden)
-    if not terms:
-        sys.exit("build-record: no forbidden-terms file; refusing to write real data without a leak check")
     ev, decs = generate(a.src, cfg)
     files = render(ev, decs, cfg)
     leak_check(files.values(), terms)

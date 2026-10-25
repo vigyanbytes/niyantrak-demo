@@ -2,7 +2,7 @@
  "labels": {
   "agent": {
    "(not recorded)": 7,
-   "Claude Code": 5112,
+   "Claude Code": 165,
    "not recorded": 30
   },
   "decision_agents": [
@@ -45,53 +45,45 @@
    "reviewer agent"
   ],
   "machine": {
-   "(not recorded)": 141,
+   "(not recorded)": 166,
    "Windows test laptop": 1,
-   "build machine A": 5007
+   "build machine A": 35
   },
   "outcome": {
-   "allowed": 5090,
+   "allowed": 180,
    "approved": 2,
-   "blocked": 47,
+   "blocked": 10,
    "error": 1,
    "needs_approval": 9
   },
   "rule_ids": {
-   "destructive_command": 13,
-   "destructive_git": 9,
+   "destructive_command": 4,
+   "destructive_git": 4,
    "disclosed-slip": 3,
    "niyantrak-launch": 7,
    "permission-prompt": 2,
-   "production_deploy": 18,
+   "production_deploy": 4,
    "proof": 19,
    "review": 2,
-   "secret_access": 9,
-   "self-modification": 1
+   "worktree-isolation": 1
   },
   "what": {
-   "Browser action": 204,
-   "Change own gate": 1,
-   "Commit": 134,
+   "Commit": 159,
    "Commit message from file": 1,
-   "Coordinate agent team": 232,
+   "Create GitHub release": 1,
    "Delete untracked files": 1,
-   "Edit file": 125,
+   "Edit docs": 1,
    "Export public tree": 2,
    "Fix review findings": 1,
-   "Google Workspace call": 4,
-   "Hosting panel call": 15,
-   "Load tool or skill": 51,
+   "Force-push to fix commit author": 1,
    "Proof run": 19,
-   "Publish private page": 30,
-   "Read file": 177,
-   "Read web page": 91,
    "Review public exposure": 1,
    "Rewrote file without blocked line": 2,
-   "Run shell command": 3162,
-   "Talk to the founder": 11,
-   "Web search": 394,
-   "WhatsApp Business call": 15,
-   "Write file": 469,
+   "Test deploy script on a mock": 1,
+   "Write CI workflow": 1,
+   "Write Dockerfile": 2,
+   "Write docs file": 1,
+   "Write outside its worktree": 1,
    "approve WhatsApp alert template": 1,
    "decide: DCO or CLA": 1,
    "decide: GitHub organisation": 1,
@@ -101,36 +93,28 @@
    "decide: security contact email": 1
   },
   "where": {
-   "Claude Code": 63,
-   "Google Workspace": 4,
-   "WhatsApp Business API": 15,
-   "agent team": 232,
-   "browser": 204,
-   "claude.ai": 30,
-   "git": 135,
-   "github": 4,
-   "hosting control panel": 15,
+   "git": 161,
+   "github": 5,
    "launch": 1,
    "legal": 1,
-   "public web": 485,
-   "shell": 3166,
+   "shell": 5,
    "test suite": 19,
    "whatsapp": 1,
-   "workspace files": 774
+   "workspace files": 9
   },
   "which": {
-   "(not recorded)": 4981,
-   "private repo": 125,
-   "vigyanbytes/niyantrak": 36,
-   "vigyanbytes/niyantrak-demo": 7
+   "private repo": 151,
+   "vigyanbytes/niyantrak": 38,
+   "vigyanbytes/niyantrak-demo": 9,
+   "vigyanbytes/niyantrak-keys": 4
   },
   "who": {
-   "coding agent": 5110,
+   "coding agent": 163,
    "founder": 38,
    "reviewer agent": 1
   },
   "whom": {
-   "(not recorded)": 5149
+   "(not recorded)": 202
   },
   "why": {
    "121 passed 0 failed 1 skipped, leak scan clean": 1,
@@ -149,12 +133,12 @@
    "758 passed 0 failed 1 skipped, leak scan clean": 1,
    "800 passed 0 failed 1 skipped, leak scan clean": 1,
    "801 passed 0 failed 1 skipped, leak scan clean": 1,
-   "No hard stop": 4935,
-   "agent co-author trailer on commit": 104,
+   "agent co-author trailer on commit": 129,
    "approved as plain separate steps, no recursive delete": 1,
    "contributor terms before public launch": 1,
-   "destructive_command hard stop": 11,
-   "destructive_git hard stop": 9,
+   "destructive_command hard stop": 2,
+   "destructive_git hard stop": 2,
+   "destructive_git hard stop (false positive)": 2,
    "disclosed: continued after a block instead of stopping": 2,
    "disclosed: wording kept the deploy matcher from firing": 1,
    "every gap closed and retested": 1,
@@ -165,17 +149,17 @@
    "no agent trailer on commit": 30,
    "permission prompt: recursive delete in one command": 1,
    "personal email on 9 early commits": 1,
-   "production_deploy hard stop": 17,
+   "production_deploy hard stop": 2,
+   "production_deploy hard stop (false positive)": 1,
    "public repo before BTS": 1,
-   "refused: agents do not modify their own gate": 1,
-   "secret_access hard stop": 9,
-   "where the public repo lives": 1
+   "where the public repo lives": 1,
+   "worktree isolation: refused by the harness": 1
   }
  },
  "meta": {
   "cutoff": "2026-10-25T11:30:00Z",
   "decision_rows": 73,
-  "events": 5149,
+  "events": 202,
   "label": "Real build record — sanitised: role labels, generic machines, counts only",
   "window": [
    "2026-10-21",

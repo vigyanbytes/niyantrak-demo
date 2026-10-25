@@ -68,9 +68,7 @@ EXPLAIN = {
               "<b>How we built Niyantrak</b> for our own real record.",
     "build-record": "These are the real, sanitised records of the AI agents that built Niyantrak: what they did, what "
                     "our gate blocked, where we slipped and disclosed it. 21–25 Oct 2026; roles instead of names, "
-                    "generic machines, counts only. The gate log covers all of the agent team's work that week, not "
-                    "only Niyantrak, and never records the command, so those events show no project — "
-                    "<a href=\"" + RECORD_SOURCE + "\" target=\"_blank\" rel=\"noopener\">how it was sanitised</a>.",
+                    "generic machines, counts only — <a href=\"" + RECORD_SOURCE + "\" target=\"_blank\" rel=\"noopener\">how it was sanitised</a>.",
 }
 
 
