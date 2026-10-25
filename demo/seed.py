@@ -4,7 +4,7 @@
     python3 demo/seed.py --src <niyantrak checkout> --out site [--end YYYY-MM-DD] [--seed 7]
 
 1. Runs the free edition's tools/demo-data.py: a made-up team (asha, ravi, meera, tomas), their AI agents and six
-   machines with documentation-range addresses, written through the real 5W store and decision log.
+   machines with documentation-range addresses, written through the real 6W store and decision log.
 2. Runs tools/build-demo.py --bundle: the panel's own page with that sample data built in.
 3. Adapts it for the hosted demo: the "Try it" box calls this server's /api/scan (Niyantrak's Python recognizers),
    the header says "Public demo", and every inline script stays hash-able for the Content-Security-Policy.

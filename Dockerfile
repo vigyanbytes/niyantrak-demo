@@ -1,10 +1,10 @@
 # Niyantrak public demo — read-only, fictional sample data, no secrets.
-# Pinned: base image by digest, the free edition by commit (tag v0.1.0), build-only packages by version.
+# Pinned: base image by digest, the free edition by commit (tag v0.1.1), build-only packages by version.
 ARG PYTHON_IMAGE=python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
 
 FROM ${PYTHON_IMAGE} AS build
 ARG NIYANTRAK_REPO=https://github.com/vigyanbytes/niyantrak.git
-ARG NIYANTRAK_COMMIT=48f8727373817fd39e6a57fe1d87839941d621c4
+ARG NIYANTRAK_COMMIT=d0bc4bed7168bc9a54a7e63221a1696278e49225
 ARG DEMO_END=
 # build stage only (discarded): git to fetch the pinned free edition
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates
